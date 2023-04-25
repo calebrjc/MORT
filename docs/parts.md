@@ -64,7 +64,13 @@ Notes:
 
 ## Microcontroller
 
-TODO(Caleb): Figure out what microcontroller to use
+[Arduino Nano (or compatible clone)](https://www.amazon.com/Deegoo-ATmega328P-Microcontroller-Board-Arduino/dp/B07R9VWD39/ref=asc_df_B07R9VWD39/?tag=hyprod-20&linkCode=df0&hvadid=459728334703&hvpos=&hvnetw=g&hvrand=898811443164575780&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9011071&hvtargid=pla-945070251730&th=1)
+
+Notes:
+- ATMega328P microcontroller
+- Board package is used to avoid having to design the PCB around an SMD chip footprint for this project
+- Slightly better choice than the MSP430 because it has three timers as opposed to two
+- No Arduino code or libraries will be used; this microcontroller will be programmed using only bare-metal C
 
 ## Battery
 
