@@ -26,10 +26,16 @@ Notes:
 - Output current: 1.2A
 - Supply voltage: 2.7V - 5.5V
 - Load voltage: 2.5V - 13.5V
+- Microcontroller interface: AIN1/2, BIN1/2, PWMA/B, STBY (7 pins), timer if no dedicated pwm
 
-## LEDs
+## Brake/Reverse Lights
 
-Any generic LEDs will do. Pay attention to voltage ratings.
+[10 Segment Bar Graph LED Display - Red](https://www.adafruit.com/product/1921)
+
+A generic white LED will do for reverse lights
+
+Notes:
+- Microcontroller interface: 2 pins, timer
 
 ## Buzzer
 
@@ -38,13 +44,14 @@ Any generic LEDs will do. Pay attention to voltage ratings.
 Notes:
 - Input voltage: 4-8VDC
 - Input current: <25mA
+- Microcontroller interface: ON/OFF (1 pin)
 
 ## Range Sensor(s)
 
-[Sharp GP2Y0A21YK0F](https://www.adafruit.com/product/164)
+[VL53L0X Time of Flight Distance Sensor](https://www.adafruit.com/product/3317)
 
 Notes:
-- TODO(Caleb): Find info on this part
+- Microcontroller interface: I2C, GPIO, SHDN (4 pins)
 
 ## IR Remote and Receiver
 
@@ -53,7 +60,7 @@ Notes:
 [IR Receiver](https://www.adafruit.com/product/157)
 
 Notes:
-- TODO(Caleb): Find info on these parts
+- Microcontroller interface: IN (1 pin), timer
 
 ## Microcontroller
 
