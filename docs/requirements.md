@@ -6,7 +6,7 @@ MORT should be able to:
 - Move in the following manners:
     - Linear, forwards and backwards
     - Rotatational, clockwise and counter-clockwise
-- Honk his horn
+- Honk its horn
 - Prevent himself from hitting walls
 - Use the following signals appropriately:
     - Brake lights

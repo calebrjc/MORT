@@ -1,5 +1,7 @@
 # Parts
 
+Relevant information about the parts that MORT uses will be detailed here.
+
 ## Chassis
 
 [TP101 Tank Chassis](https://www.amazon.com/dp/B09TFN2Z56?psc=1&ref=ppx_yo2ov_dt_b_product_details)
