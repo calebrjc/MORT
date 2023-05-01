@@ -1,27 +1,28 @@
 # Directories
-SRC_DIR = src
+SRC_DIR   = src
 BUILD_DIR = build
-TEST_DIR = test
-OBJ_DIR = $(BUILD_DIR)/obj
-BIN_DIR = $(BUILD_DIR)/bin
+TEST_DIR  = test
+OBJ_DIR   = $(BUILD_DIR)/obj
+BIN_DIR   = $(BUILD_DIR)/bin
 
 # Tools
-CC = avr-gcc
+CC    = avr-gcc
 MKDIR = mkdir -p
 
 # Options
-MCU_FLAGS = -mmcu=atmega328 -DF_CPU=16000000UL
-WARNING_FLAGS = -Wall -Wextra -Werror -Wshadow
-CFLAGS = $(MCU_FLAGS) $(WARNING_FLAGS) -g -Og
+MCU_FLAGS           = -mmcu=atmega328 -DF_CPU=16000000UL
+WARNING_FLAGS       = -Wall -Wextra -Wpedantic -Werror -Wshadow
+CFLAGS              = $(MCU_FLAGS) $(WARNING_FLAGS) -g -Og
+AVRDUDE_SERIAL_PORT = /dev/ttyUSB0
 
 # Files
-TARGET = MORT
-SRCS = $(wildcard $(SRC_DIR)/*.c)
-OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
+TARGET    = MORT
+SRCS      = $(wildcard $(SRC_DIR)/*.c)
+OBJS      = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 TEST_SRCS = $(wildcard $(TEST_DIR)/*.c)
-TESTS = $(patsubst $(TEST_DIR)/%.c, $(BIN_DIR)/%, $(TEST_SRCS))
+TESTS     = $(patsubst $(TEST_DIR)/%.c, $(BIN_DIR)/%, $(TEST_SRCS))
 
-.PHONY: all clean flash
+.PHONY: all clean analyze flash
 
 # Build target executable and all tests
 all: $(BIN_DIR)/$(TARGET) $(TESTS)
@@ -47,10 +48,14 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@$(MKDIR) $(OBJ_DIR)
 	$(CC) -c $< -o $@ $(CFLAGS)
 
+# Static analysis rule
+analyze:
+	cppcheck src/ --enable=all --suppress=missingIncludeSystem --error-exitcode=1 --quiet
+
 # Microcontroller flash rule
 flash: flash.$(TARGET)
 flash.%: $(BIN_DIR)/%
-	avrdude -P /dev/ttyUSB0 -c arduino -p atmega328p -b 57600 -U flash:w:$<:e -q -q
+	avrdude -P $(AVRDUDE_SERIAL_PORT) -c arduino -p atmega328p -b 57600 -U flash:w:$<:e -q -q
 
 clean:
 	rm -rf build
