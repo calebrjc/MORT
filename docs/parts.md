@@ -2,6 +2,25 @@
 
 Relevant information about the parts that MORT uses will be detailed here.
 
+**Table of Contents**
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Parts](#parts)
+  - [Chassis](#chassis)
+  - [Motors](#motors)
+  - [Motor Drivers](#motor-drivers)
+  - [Brake/Reverse Lights](#brakereverse-lights)
+  - [Buzzer](#buzzer)
+  - [Range Sensor(s)](#range-sensors)
+  - [IR Remote and Receiver](#ir-remote-and-receiver)
+  - [Microcontroller](#microcontroller)
+  - [Battery](#battery)
+
+<!-- /code_chunk_output -->
+
+
 ## Chassis
 
 [TP101 Tank Chassis](https://www.amazon.com/dp/B09TFN2Z56?psc=1&ref=ppx_yo2ov_dt_b_product_details)
@@ -37,7 +56,7 @@ Notes:
 A generic white LED will do for reverse lights
 
 Notes:
-- Microcontroller interface: 2 pins, timer
+- Microcontroller interface: 2 pins, 74HC595, timer
 
 ## Buzzer
 
