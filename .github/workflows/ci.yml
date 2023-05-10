@@ -1,0 +1,12 @@
+on: [push]
+jobs:
+  build_and_analyze:
+    runs-on: ubuntu-latest
+    container:
+      image: calebrjc/avr-gcc-7.3.0:latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+      - run: make format && git diff --quiet
+      - run: make
+      - run: make cppcheck

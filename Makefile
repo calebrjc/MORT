@@ -18,6 +18,7 @@ AVRDUDE_SERIAL_PORT = /dev/ttyUSB0
 # Files
 TARGET    = MORT
 SRCS      = $(wildcard $(SRC_DIR)/*.c)
+HEADERS   = $(wildcard $(SRC_DIR)/*.h)
 OBJS      = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 TEST_SRCS = $(wildcard $(TEST_DIR)/*.c)
 TESTS     = $(patsubst $(TEST_DIR)/%.c, $(BIN_DIR)/%, $(TEST_SRCS))
@@ -47,6 +48,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/%.h
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@$(MKDIR) $(OBJ_DIR)
 	$(CC) -c $< -o $@ $(CFLAGS)
+
+# Formatting rule
+format:
+	@clang-format-12 -i $(SRCS) $(HEADERS)
 
 # Static analysis rule
 analyze:
