@@ -1,3 +1,8 @@
+# Allow the user to specify the location of the avr-gcc toolchain
+ifdef AVR_GCC_DIR
+AVR_GCC_BIN_DIR = $(AVR_GCC_DIR)/bin
+endif
+
 # Directories
 SRC_DIR   = src
 BUILD_DIR = build
@@ -6,7 +11,7 @@ OBJ_DIR   = $(BUILD_DIR)/obj
 BIN_DIR   = $(BUILD_DIR)/bin
 
 # Tools
-CC    = avr-gcc
+CC    = $(AVR_GCC_BIN_DIR)/avr-gcc
 MKDIR = mkdir -p
 
 # Options

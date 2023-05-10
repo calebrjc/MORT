@@ -8,5 +8,5 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v3
       - run: make format && git diff --quiet
-      - run: make
+      - run: AVR_GCC_DIR=/home/dev/tools/avr-gcc make
       - run: make cppcheck
