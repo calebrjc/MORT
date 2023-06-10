@@ -11,7 +11,11 @@ OBJ_DIR   = $(BUILD_DIR)/obj
 BIN_DIR   = $(BUILD_DIR)/bin
 
 # Tools
+ifdef AVR_GCC_BIN_DIR
 CC    = $(AVR_GCC_BIN_DIR)/avr-gcc
+else
+CC    = avr-gcc
+endif
 MKDIR = mkdir -p
 
 # Options
@@ -47,7 +51,6 @@ $(BIN_DIR)/test_%: $(TEST_DIR)/test_%.c $(filter-out $(OBJ_DIR)/main.o, $(OBJS))
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(SRC_DIR)/%.h
 	@$(MKDIR) $(OBJ_DIR)
 	$(CC) -c $< -o $@ $(CFLAGS)
-
 
 # Object build rule, .c without header
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
