@@ -1,13 +1,14 @@
-FROM ubuntu:22.04
+FROM ubuntu:23.04
 
 # Install packages
 RUN apt update && apt install -y \
-    clang-format-12 \
+    clang-format \
     cppcheck \
     git \
     make \
     nano \
     wget \
+    cmake \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user named dev (in the root group for GitHub actions)
