@@ -6,9 +6,11 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 set(_toolchain_prefix  "avr")
 
-if (DEFINED ENV{AVR_TOOLCHAIN_PATH})
-    set(_toolchain_prefix $ENV{AVR_TOOLCHAIN_PATH}/bin/${_toolchain_prefix})
+if (DEFINED ENV{AVR_TOOLCHAIN_DIR})
+    set(_toolchain_prefix $ENV{AVR_TOOLCHAIN_DIR}/bin/${_toolchain_prefix})
 endif()
+
+message(STATUS "Using AVR toolchain prefix: ${_toolchain_prefix}")
 
 set(CMAKE_AR           ${_toolchain_prefix}-ar${CMAKE_EXECUTABLE_SUFFIX})
 set(CMAKE_ASM_COMPILER ${_toolchain_prefix}-gcc${CMAKE_EXECUTABLE_SUFFIX})
