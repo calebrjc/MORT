@@ -30,7 +30,7 @@ jobs:
       run: cd build; cmake --build . --config ${{env.BUILD_TYPE}}
 
     - name: Check formatting
-      run: cd build; make format && git diff ---quiet
+      run: cd build; make format && git diff --quiet
 
     - name: Run linting
       run: cd build; make analyze
