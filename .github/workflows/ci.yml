@@ -7,7 +7,7 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3
-      - run: AVR_TOOLCHAIN_DIR=/home/dev/tools/avr-gcc cmake -S. -Bbuild --toolchain cmake/avr.cmake -G"Unix Makefiles"; cd build
+      - run: AVR_TOOLCHAIN_DIR=/home/calebrjc/tools/avr-gcc cmake -DCMAKE_TOOLCHAIN_FILE=cmake/avr.cmake -G"Unix Makefiles" -S. -Bbuild; cd build
       - run: make format && git diff --quiet
       - run: make
       - run: make analyze
