@@ -12,10 +12,14 @@ project(
 assert(meson.is_cross_build(), 'This project can only be built in a cross build environment.')
 
 # List source files here
-headers = files()
+headers = files(
+    'src/bsp/io/io.h',
+    'src/bsp/io/pins.h',
+)
 
 sources = files(
     'src/main.c',
+    'src/bsp/io/io.c',
 )
 
 exe = executable('@0@.bin'.format(meson.project_name()), [headers, sources])
@@ -58,10 +62,10 @@ run_target(
     command : [
         avrdude,
         '-v',
-        '-patmega328p',
-        '-carduino',
-        '-PCOM3',
-        '-b115200',
+        '-p', 'atmega328p',
+        '-c', 'arduino',
+        '-P', 'COM3',
+        '-b', '115200',
         '-D',
         '-Uflash:w:@0@:i'.format(hex.full_path())
     ],
