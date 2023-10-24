@@ -14,11 +14,11 @@ static volatile uint8_t *const PIN_REGISTERS[] = {&PINB, &PINC, &PIND};
 // Convenience macro for getting the port index from a pin number
 #define PORT_MASK     0x18
 #define PORT_OFFSET   3
-#define PORT_IDX(pin) (((pin) & PORT_MASK) >> PORT_OFFSET)
+#define PORT_IDX(pin) (((pin)&PORT_MASK) >> PORT_OFFSET)
 
 // Convenience macro for getting the pin index from a pin number
 #define PIN_MASK     0x07
-#define PIN_IDX(pin) ((pin) & PIN_MASK)
+#define PIN_IDX(pin) ((pin)&PIN_MASK)
 
 // Convenience macros for getting a register from a pin number
 #define PORT_REGISTER(pin) *PORT_REGISTERS[PORT_IDX(pin)]

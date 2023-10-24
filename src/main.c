@@ -12,7 +12,7 @@ int main(void) {
         io_write(IO_PB5, io_read(IO_PB1));
 
         io_toggle(IO_PB0);
-        
+
         _delay_ms(500);
     }
 
