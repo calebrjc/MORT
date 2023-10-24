@@ -2,6 +2,7 @@ FROM ubuntu:23.04
 
 # Install packages
 RUN apt update && apt install -y \
+    avrdude \
     clang-format \
     curl \
     cppcheck \
