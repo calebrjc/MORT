@@ -1,7 +1,7 @@
 #ifndef _CALEBRJC_BSP_IO_IO_H_
 #define _CALEBRJC_BSP_IO_IO_H_
 
-#include "pins.h"
+#include "bsp/hw_defs.h"
 
 /// @brief The logic level of an IO pin.
 typedef enum io_logic_level {
