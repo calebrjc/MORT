@@ -1,28 +1,30 @@
 project(
     'MORT',
     'c',
-    default_options : [
+    default_options: [
         'buildtype=minsize',
         'b_lto=true',
         'cpp_rtti=false',
         'cpp_eh_=none',
+        'default_library=static'
     ],
 )
 
 assert(meson.is_cross_build(), 'This project can only be built in a cross build environment.')
 
-# List source files here
-headers = files(
-    'src/bsp/io/io.h',
-    'src/bsp/io/pins.h',
-)
+subdir('src/bsp_atmega328p')
 
 sources = files(
     'src/main.c',
-    'src/bsp/io/io.c',
 )
 
-exe = executable('@0@.bin'.format(meson.project_name()), [headers, sources])
+# exe = executable('@0@.bin'.format(meson.project_name()), [headers, sources])
+exe = executable(
+    '@0@.bin'.format(meson.project_name()),
+    include_directories: bsp_inc,
+    sources: sources,
+    link_with: bsp_lib,
+)
 
 objcopy = find_program('avr-objcopy')
 avrdude = find_program('avrdude')
@@ -30,9 +32,9 @@ avrdude = find_program('avrdude')
 eep_output_file = '@0@.eep'.format(meson.project_name())
 eep = custom_target(
     eep_output_file,
-    input : exe,
-    output : eep_output_file,
-    command : [
+    input: exe,
+    output: eep_output_file,
+    command: [
         objcopy,
         '-O', 'ihex',
         '-j', '.eeprom',
@@ -46,20 +48,20 @@ eep = custom_target(
 hex_output_file = '@0@.hex'.format(meson.project_name())
 hex = custom_target(
     hex_output_file,
-    input : exe,
-    output : hex_output_file,
-    command : [
+    input: exe,
+    output: hex_output_file,
+    command: [
         objcopy,
         '-O', 'ihex',
         '-R', '.eeprom',
         '@INPUT@', '@OUTPUT@',
     ],
-    depends : eep,
+    depends: eep,
 )
 
 run_target(
     'flash',
-    command : [
+    command: [
         avrdude,
         '-v',
         '-p', 'atmega328p',
@@ -73,8 +75,19 @@ run_target(
 )
 
 run_target(
+    'format',
+    command: [
+        'clang-format',
+        '-i',
+        sources,
+        bsp_headers,
+        bsp_sources,
+    ]
+)
+
+run_target(
     'check',
-    command : [
+    command: [
         'cppcheck',
         '--quiet',
         '--platform=avr8',
@@ -84,8 +97,10 @@ run_target(
         '--suppress=unusedStructMember',
         '--suppress=unusedVariable',
         '--suppress=unmatchedSuppression',
-        headers,
+        '-I', '../src/bsp_atmega328p/include',
         sources,
+        bsp_headers,
+        bsp_sources,
     ],
     depends: hex,
 )
