@@ -1,6 +1,7 @@
 #ifndef _CALEBRJC_BSP_DRIVERS_USART_H_
 #define _CALEBRJC_BSP_DRIVERS_USART_H_
 
+#include <stdarg.h>
 #include <stdbool.h>
 
 #include "bsp/hw_defs.h"
@@ -46,6 +47,16 @@ char usart_read(usart device);
 /// @param device The USART to write to.
 /// @param c The character to write to the USART.
 void usart_write(usart device, char c);
+
+/// @brief Output a character to the USART.
+/// @param c The character to output.
+void _putchar(char c);
+
+/// @brief Output a formatted string to the USART.
+/// @param device The USART to output to.
+/// @param format The format string to output.
+/// @param ... The arguments to the format string.
+void usart_printf(usart device, const char* format, ...);
 
 /// @brief Register a callback to be called when a character is received.
 /// @param device The USART to register the callback for.
