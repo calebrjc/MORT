@@ -18,7 +18,7 @@ jobs:
       run: cd builddir; PATH=/home/dev/tools/avr-gcc/bin:$PATH ninja
 
     - name: Check formatting
-      run: cd builddir; ninja clang-format && git diff --quiet
+      run: cd builddir; ninja format && git diff --quiet
 
     - name: Run linting
       run: cd builddir; ninja check

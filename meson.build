@@ -98,6 +98,7 @@ run_target(
         '--suppress=unusedVariable',
         '--suppress=unmatchedSuppression',
         '-I', '../src/bsp_atmega328p/include',
+        '-I', '../src/bsp_atmega328p/external/printf', # Hacky. I'll try to fix this later.
         sources,
         bsp_headers,
         bsp_sources,
