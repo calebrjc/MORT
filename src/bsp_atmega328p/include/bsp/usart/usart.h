@@ -1,13 +1,18 @@
-#ifndef _CALEBRJC_BSP_DRIVERS_USART_H_
-#define _CALEBRJC_BSP_DRIVERS_USART_H_
+#ifndef _CALEBRJC_BSP_USART_USART_H_
+#define _CALEBRJC_BSP_USART_USART_H_
 
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stdint.h>
 
-#include "bsp/hw_defs.h"
+/// @brief USART peripherals.
+
+typedef uint8_t usart;
+
+#define BSP_USART0 0x00
 
 /// @brief Baud rates for the USART.
-typedef enum usart_baud_rate {
+typedef enum {
     USART_BAUD_INVALID = 0U,
     USART_BAUD_9600    = 9600U,
     USART_BAUD_19200   = 19200U,
@@ -17,7 +22,7 @@ typedef enum usart_baud_rate {
 } usart_baud_rate;
 
 /// @brief Configuration for the USART.
-typedef struct usart_config {
+typedef struct {
     /// @brief The baud rate to use.
     usart_baud_rate baud_rate;
 
@@ -26,7 +31,7 @@ typedef struct usart_config {
 } usart_config;
 
 /// @brief A callback to be called when a character is received.
-typedef void (*usart_recv_callback)(char);
+typedef void (*usart_recv_callback)(void);
 
 /// @brief Initialize the USART.
 /// @param device The USART to initialize.
@@ -58,9 +63,15 @@ void _putchar(char c);
 /// @param ... The arguments to the format string.
 void usart_printf(usart device, const char* format, ...);
 
+/// @brief Output a formatted string to the USART.
+/// @param device The USART to output to.
+/// @param format The format string to output.
+/// @param args The arguments to the format string.
+void usart_vprintf(usart device, const char* format, va_list args);
+
 /// @brief Register a callback to be called when a character is received.
 /// @param device The USART to register the callback for.
 /// @param callback The callback to register.
 void usart_register_callback(usart device, usart_recv_callback on_character_recv);
 
-#endif  // _CALEBRJC_BSP_DRIVERS_USART_H_
+#endif  // _CALEBRJC_BSP_USART_USART_H_

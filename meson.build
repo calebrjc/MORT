@@ -18,7 +18,6 @@ sources = files(
     'src/main.c',
 )
 
-# exe = executable('@0@.bin'.format(meson.project_name()), [headers, sources])
 exe = executable(
     '@0@.bin'.format(meson.project_name()),
     include_directories: bsp_inc,
@@ -66,7 +65,7 @@ run_target(
         '-v',
         '-p', 'atmega328p',
         '-c', 'arduino',
-        '-P', 'COM3',
+        '-P', 'COM4',
         '-b', '115200',
         '-D',
         '-Uflash:w:@0@:i'.format(hex.full_path())

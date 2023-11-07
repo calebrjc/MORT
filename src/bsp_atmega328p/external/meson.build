@@ -1,6 +1,6 @@
 # printf
 printf_inc = include_directories('printf')
-printf_headers = files('printf/printf.h')
+# printf_headers = files('printf/printf.h')
 printf_sources = files('printf/printf.c')
 printf_lib = library(
     'printf',

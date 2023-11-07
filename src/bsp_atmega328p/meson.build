@@ -6,16 +6,17 @@ subdir('external')
 bsp_inc = include_directories('include')
 
 bsp_headers = files(
-    'include/bsp/hw_defs.h',
     'include/bsp/dsa/queue.h',
     'include/bsp/io/io.h',
     'include/bsp/usart/usart.h',
+    'include/bsp/util/assert.h',
 )
 
 bsp_sources = files(
     'src/dsa/queue.c',
     'src/io/io.c',
     'src/usart/usart.c',
+    'src/util/assert.c',
 )
 
 bsp_lib = library(

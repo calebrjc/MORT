@@ -73,7 +73,7 @@ ISR(USART_RX_vect) {
     q_enqueue(&usart0_rx_queue, data);
 
     // Call the callback function if there is one registered
-    if (usart0_callback) { usart0_callback((char)data); }
+    if (usart0_callback) { usart0_callback(); }
 }
 
 // Implementation ----------------------------------------------------------------------------------
@@ -151,6 +151,12 @@ void usart_printf(usart device, const char* format, ...) {
     va_start(args, format);
     vprintf(format, args);
     va_end(args);
+}
+
+void usart_vprintf(usart device, const char* format, va_list args) {
+    (void)device;
+
+    vprintf(format, args);
 }
 
 void usart_register_callback(usart device, usart_recv_callback on_character_recv) {
