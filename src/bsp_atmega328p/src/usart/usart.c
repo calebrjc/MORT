@@ -1,10 +1,9 @@
 #include "bsp/usart/usart.h"
 
 #include <avr/interrupt.h>
-#include <avr/io.h>
 
 #include "bsp/dsa/queue.h"
-#include "bsp/io/io.h"
+#include "bsp/util/assert.h"
 #include "printf.h"
 
 #ifndef F_CPU
@@ -25,6 +24,12 @@
 
 // Configuration(s) --------------------------------------------------------------------------------
 
+// Initialization flag
+static bool usart0_initialized = false;
+
+#define assert_usart0_initialized() \
+    bsp_assert(usart0_initialized, "USART0 has not been initialized.")
+
 // USART0 configuration (initialized in usart_init())
 static usart_config usart0_config = {0};
 
@@ -35,20 +40,20 @@ static usart_recv_callback usart0_callback = NULL;
 
 #define USART0_BUFFER_SIZE 16
 
-static uint8_t usart0_rx_buffer[USART0_BUFFER_SIZE];
-static queue usart0_rx_queue;
-
-static uint8_t usart0_tx_buffer[USART0_BUFFER_SIZE];
-static volatile queue usart0_tx_queue;
+QUEUE_DECLARE_STATIC(usart0_rx_queue, char, USART0_BUFFER_SIZE);
+QUEUE_DECLARE_STATIC(usart0_tx_queue, char, USART0_BUFFER_SIZE);
 
 // Interrupt handlers ------------------------------------------------------------------------------
 
 /// @brief Data register empty interrupt handler for USART0. Triggered when the USART0 data register
 ///        is empty and ready to receive more data.
 ISR(USART_UDRE_vect) {
-    if (!q_is_empty(&usart0_tx_queue)) {
+    if (!queue_is_empty(&usart0_tx_queue)) {
         // Send the next byte in the TX buffer
-        UDR0 = q_dequeue(&usart0_tx_queue);
+        char data;
+        queue_dequeue(&usart0_tx_queue, &data);
+
+        UDR0 = data;
     } else {
         // Nothing to send, disable data register empty interrupts
         UCSR0B &= ~_BV(UDRIE0);
@@ -58,72 +63,78 @@ ISR(USART_UDRE_vect) {
 /// @brief Receive complete interrupt handler for USART0.
 ISR(USART_RX_vect) {
     // Read the byte from the data register
-    uint8_t data = UDR0;
+    char data = UDR0;
 
     // Ignore the byte if the RX buffer is full
-    if (q_is_full(&usart0_rx_queue)) return;
+    if (queue_is_full(&usart0_rx_queue)) return;
 
-    if (usart0_config.echo_on_recv) {
-        // Echo the byte back to the sender
-        // (Convert carriage returns to newlines)
-        usart_write(BSP_USART0, ((char)data == '\r') ? '\n' : (char)data);
-    }
+    // Echo the byte back to the sender if necessary
+    // (Convert carriage returns to newlines)
+    if (usart0_config.echo_on_recv) usart_write(BSP_USART0, (data == '\r') ? '\n' : data);
 
     // Enqueue the byte into the RX buffer
-    q_enqueue(&usart0_rx_queue, data);
+    queue_enqueue(&usart0_rx_queue, &data);
 
     // Call the callback function if there is one registered
-    if (usart0_callback) { usart0_callback(); }
+    if (usart0_callback) usart0_callback();
 }
 
 // Implementation ----------------------------------------------------------------------------------
 
 void usart_init(usart device, usart_config config) {
-    // TODO(Caleb): Support other data lengths and parity modes
     (void)device;
 
-    // Set baud rate
-    UBRR0H = (uint8_t)UBRRH(config.baud_rate);
-    UBRR0L = (uint8_t)UBRRL(config.baud_rate);
-
-    // Enable receiver and transmitter
-    UCSR0B = _BV(RXEN0) | _BV(TXEN0);
-
-    // Set frame format: 8data, 1stop bit
-    UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
-
-    // Initialize ring buffers
-    q_init(&usart0_rx_queue, usart0_rx_buffer, sizeof(usart0_rx_buffer));
-    q_init(&usart0_tx_queue, usart0_tx_buffer, sizeof(usart0_tx_buffer));
+    bsp_assert(!usart0_initialized, "USART0 has already been initialized.");
 
     // Save the configuration
     usart0_config = config;
 
-    // Clear RX and TX interrupt flags
-    UCSR0A |= _BV(RXC0);
+    // Set the baud rate
+    UBRR0H = (uint8_t)UBRRH(config.baud_rate);
+    UBRR0L = (uint8_t)UBRRL(config.baud_rate);
+
+    // Enable the receiver and transmitter blocks
+    UCSR0B = _BV(RXEN0) | _BV(TXEN0);
+
+    // Set the frame format: 8data, 1stop bit
+    // TODO(Caleb): Support other data lengths and parity modes
+    UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
 
     // Enable RX and TX interrupts
     UCSR0B |= _BV(RXCIE0);
+
+    // Set the initialization flag
+    usart0_initialized = true;
 }
 
 bool usart_poll(usart device) {
     (void)device;
 
+    assert_usart0_initialized();
+
     // Return true if there is data in the RX buffer
-    return !q_is_empty(&usart0_rx_queue);
+    return !queue_is_empty(&usart0_rx_queue);
 }
 
 char usart_read(usart device) {
     (void)device;
 
-    // Spin until there is data in the RX buffer
-    while (q_is_empty(&usart0_rx_queue)) {}
+    assert_usart0_initialized();
 
-    return (char)q_dequeue(&usart0_rx_queue);
+    // Spin until there is data in the RX buffer
+    while (queue_is_empty(&usart0_rx_queue)) {}
+
+    // Dequeue the byte from the RX buffer
+    char data;
+    queue_dequeue(&usart0_rx_queue, &data);
+
+    return data;
 }
 
 void usart_write(usart device, char c) {
     (void)device;
+
+    assert_usart0_initialized();
 
     if (c == '\n') {
         // Send a carriage return before the newline (for terminals that require it)
@@ -131,10 +142,10 @@ void usart_write(usart device, char c) {
     }
 
     // Spin until there is space in the TX buffer
-    while (q_is_full(&usart0_tx_queue)) {}
+    while (queue_is_full(&usart0_tx_queue)) {}
 
     // Enqueue the byte in the TX buffer
-    q_enqueue(&usart0_tx_queue, c);
+    queue_enqueue(&usart0_tx_queue, &c);
 
     // Enable TX interrupts
     UCSR0B |= _BV(UDRIE0);
@@ -147,6 +158,8 @@ void _putchar(char c) {
 void usart_printf(usart device, const char* format, ...) {
     (void)device;
 
+    assert_usart0_initialized();
+
     va_list args;
     va_start(args, format);
     vprintf(format, args);
@@ -156,11 +169,15 @@ void usart_printf(usart device, const char* format, ...) {
 void usart_vprintf(usart device, const char* format, va_list args) {
     (void)device;
 
+    assert_usart0_initialized();
+
     vprintf(format, args);
 }
 
 void usart_register_callback(usart device, usart_recv_callback on_character_recv) {
     (void)device;
+
+    assert_usart0_initialized();
 
     usart0_callback = on_character_recv;
 }

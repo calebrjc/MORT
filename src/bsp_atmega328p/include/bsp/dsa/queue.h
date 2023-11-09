@@ -16,7 +16,7 @@
 /// - typedef volatile struct { ... } queue;
 /// - typedef struct { volatile T ..., volatile T ... } queue;
 /// - declare the queue as volatile in the function signatures that I deem necessary (mostly
-///   accessor and status functions e.g. q_size, q_is_empty, q_is_full)
+///   accessor and status functions e.g. queue_size, queue_is_empty, queue_is_full)
 ///
 /// I'm not sure which of these is the best, but I'm going to go with my first approach for now.
 ///
@@ -24,59 +24,71 @@
 /// use some synchronization primitive e.g. condition variable, but I don't have access to those
 /// yet, so I'm going to stick with volatile for now.)
 
-/// @brief Queue data structure, implemented as a circular buffer.
+/// @brief Queue data structure, implemented as a circular buffer of a fixed size.
 typedef volatile struct {
     /// @brief The queue's data storage.
     uint8_t *data;
 
     /// @brief The size of the queue's data storage.
-    size_t size;
+    size_t data_size;
+
+    /// @brief The size of each element in the queue.
+    size_t element_size;
 
     /// @brief The index of the front of the queue.
-    size_t head;
+    size_t head_idx;
 
     /// @brief The index of the back of the queue.
-    size_t tail;
+    size_t tail_idx;
 
     /// @brief True if the queue is full, and false otherwise.
     bool is_full;
 } queue;
 
-/// @brief Initialize a queue.
-/// @param q The queue to initialize.
-/// @param buffer The buffer to use for the queue.
-/// @param size The size of the buffer.
-void q_init(queue *q, uint8_t *buffer, size_t size);
+#define QUEUE_DECLARE_IMPL(identifier, T, size, qualifier) \
+    qualifier uint8_t identifier##_data[size * sizeof(T)]; \
+    qualifier queue identifier = {                         \
+        .data         = identifier##_data,                 \
+        .data_size    = size,                              \
+        .element_size = sizeof(T),                         \
+        .head_idx     = 0,                                 \
+        .tail_idx     = 0,                                 \
+        .is_full      = false,                             \
+    }
+
+#define QUEUE_DECLARE(identifier, size, T)        QUEUE_DECLARE_IMPL(identifier, size, T, )
+#define QUEUE_DECLARE_STATIC(identifier, size, T) QUEUE_DECLARE_IMPL(identifier, size, T, static)
 
 /// @brief Enqueue data into the queue, or do nothing if the queue is full.
 /// @param q The queue to enqueue data into.
 /// @param data The data to enqueue.
-void q_enqueue(queue *q, uint8_t data);
+/// @param data The data to enqueue.
+void queue_enqueue(queue *q, const void *data);
 
-/// @brief Pop and return the data at the front of the queue, or 0 if the queue is empty.
+/// @brief Retrieve the data at the front of the queue, or NULL if the queue is empty.
 /// @param q The queue to dequeue data from.
-/// @return The data at the front of the queue, or 0 if the queue is empty.
-uint8_t q_dequeue(queue *q);
+/// @param o_data The data at the front of the queue, or NULL if the queue is empty.
+void queue_dequeue(queue *q, void *o_data);
 
-/// @brief Return the data at the front of the queue without removing it, or 0 if the queue is
+/// @brief Retrieve the data at the front of the queue without removing it, or NULL if the queue is
 /// empty.
 /// @param q The queue to peek at.
-/// @return The data at the front of the queue, or 0 if the queue is empty.
-uint8_t q_peek(queue *q);
+/// @param o_data The data at the front of the queue, or NULL if the queue is empty.
+void queue_peek(const queue *q, void *o_data);
 
 /// @brief Return the number of elements in the queue.
 /// @param q The queue to get the size of.
 /// @return The number of elements in the queue.
-size_t q_size(const queue *q);
+size_t queue_size(const queue *q);
 
 /// @brief Return true if the queue is empty, and false otherwise.
 /// @param q The queue to check.
 /// @return True if the queue is empty, and false otherwise.
-bool q_is_empty(const queue *q);
+bool queue_is_empty(const queue *q);
 
 /// @brief Return true if the queue is full, and false otherwise.
 /// @param q The queue to check.
 /// @return True if the queue is full, and false otherwise.
-bool q_is_full(const queue *q);
+bool queue_is_full(const queue *q);
 
 #endif  // _CALEBRJC_BSP_DSA_QUEUE_H_

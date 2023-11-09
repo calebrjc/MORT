@@ -1,70 +1,66 @@
 #include "bsp/dsa/queue.h"
 
-void q_init(queue *q, uint8_t *buffer, size_t size) {
-    // Sanity check arguments
-    if (!q || !buffer || size == 0) return;
+#include <string.h>
 
-    q->data    = buffer;
-    q->size    = size;
-    q->head    = 0;
-    q->tail    = 0;
-    q->is_full = false;
-}
-
-void q_enqueue(queue *q, uint8_t data) {
+void queue_enqueue(queue *q, const void *data) {
     // If the queue is full, do nothing
-    if (!q || q_is_full(q)) return;
+    if (!q || !data || queue_is_full(q)) return;
 
     // Enqueue the data
-    q->data[q->head] = data;
+    memcpy(&q->data[q->head_idx * q->element_size], data, q->element_size);
 
-    // Wrap around if the head is at the end of the queue
-    q->head = (q->head + 1 == q->size) ? 0 : q->head + 1;
+    // Wrap around if the head_idx is at the end of the queue
+    q->head_idx = (q->head_idx + 1 == q->data_size) ? 0 : q->head_idx + 1;
 
-    // If the head is equal to the tail, the queue is full
-    if (q->head == q->tail) q->is_full = true;
+    // If the head_idx is equal to the tail_idx, the queue is full
+    if (q->head_idx == q->tail_idx) q->is_full = true;
 }
 
-uint8_t q_dequeue(queue *q) {
+void queue_dequeue(queue *q, void *o_data) {
     // If the queue is empty, return 0
-    if (!q || q_is_empty(q)) return 0;
+    if (!q || !o_data || queue_is_empty(q)) {
+        o_data = NULL;
+        return;
+    }
 
     // Dequeue the data
-    uint8_t data = q->data[q->tail];
+    memcpy(o_data, &q->data[q->tail_idx * q->element_size], q->element_size);
 
-    // Wrap around if the tail is at the end of the queue
-    q->tail = (q->tail + 1 == q->size) ? 0 : q->tail + 1;
+    // Wrap around if the tail_idx is at the end of the queue
+    q->tail_idx = (q->tail_idx + 1 == q->data_size) ? 0 : q->tail_idx + 1;
 
-    // If the head is not equal to the tail, the queue is not full
-    if (q->head != q->tail) q->is_full = false;
-
-    return data;
+    // If the head_idx is not equal to the tail_idx, the queue is not full
+    if (q->head_idx != q->tail_idx) q->is_full = false;
 }
 
-uint8_t q_peek(queue *q) {
+void queue_peek(const queue *q, void *o_data) {
     // If the queue is empty, return 0
-    if (!q || q_is_empty(q)) return 0;
+    if (!q || !o_data || queue_is_empty(q)) {
+        o_data = NULL;
+        return;
+    }
 
-    return q->data[q->tail];
+    // Peek at the data
+    memcpy(o_data, &q->data[q->tail_idx * q->element_size], q->element_size);
 }
 
-size_t q_size(const volatile queue *q) {
+size_t queue_size(const volatile queue *q) {
     if (!q) return 0;
 
-    if (q->is_full) return q->size;
+    if (q->is_full) return q->data_size;
 
-    if (q->head >= q->tail) return q->head - q->tail;
+    if (q->head_idx >= q->tail_idx) return q->head_idx - q->tail_idx;
 
-    return q->size - q->tail + q->head;
+    return q->data_size - q->tail_idx + q->head_idx;
 }
 
-bool q_is_empty(const volatile queue *q) {
+bool queue_is_empty(const volatile queue *q) {
     if (!q) return true;
 
-    return q->head == q->tail && !q->is_full;
+    return q->head_idx == q->tail_idx && !q->is_full;
 }
 
-bool q_is_full(const volatile queue *q) {
+bool queue_is_full(const volatile queue *q) {
     if (!q) return false;
 
     return q->is_full;
