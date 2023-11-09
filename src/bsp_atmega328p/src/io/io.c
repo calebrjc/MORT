@@ -25,27 +25,23 @@ static volatile uint8_t *const PIN_REGISTERS[] = {&PINB, &PINC, &PIND};
 #define DDR_REGISTER(pin)  *DDR_REGISTERS[PORT_IDX(pin)]
 #define PIN_REGISTER(pin)  *PIN_REGISTERS[PORT_IDX(pin)]
 
-void io_init(void) {
-    // Nothing to do here for now
-}
-
 void io_configure(io_pin pin, io_config config) {
     switch (config.direction) {
-        case IO_INPUT:
+        case IO_DIRECTION_INPUT:
             // Set the pin up as an input
             DDR_REGISTER(pin) &= ~_BV(PIN_IDX(pin));
 
             // Set the pin's resistor
             switch (config.resistor) {
-                case IO_FLOATING:
+                case IO_RESISTOR_FLOATING:
                     PORT_REGISTER(pin) &= ~_BV(PIN_IDX(pin));
                     break;
-                case IO_PULLUP:
+                case IO_RESISTOR_PULLUP:
                     PORT_REGISTER(pin) |= _BV(PIN_IDX(pin));
                     break;
             }
             break;
-        case IO_OUTPUT:
+        case IO_DIRECTION_OUTPUT:
             // Set the pin up as an output
             DDR_REGISTER(pin) |= _BV(PIN_IDX(pin));
 

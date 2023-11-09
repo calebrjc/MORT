@@ -1,12 +1,17 @@
-#include <avr/interrupt.h>
+#include "mort/hw.h"
 
-#include "bsp/usart/usart.h"
+void handle_usart_recv(void) {
+    usart_read(MORT_USART);
+
+    io_toggle(MORT_DEBUG_LED);
+}
 
 int main(void) {
-    sei();
+    hw_init();
 
-    usart_init(BSP_USART0, (usart_config){.baud_rate = USART_BAUD_57600, .echo_on_recv = true});
-    usart_printf(BSP_USART0, "Welcome to MORT\n> ");
+    usart_register_callback(MORT_USART, handle_usart_recv);
+
+    usart_printf(MORT_USART, "Welcome to MORT\n> ");
 
     while (1) {}
 

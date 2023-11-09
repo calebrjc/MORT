@@ -14,8 +14,13 @@ assert(meson.is_cross_build(), 'This project can only be built in a cross build 
 
 subdir('src/bsp_atmega328p')
 
+headers = files(
+    'src/mort/hw.h'
+)
+
 sources = files(
     'src/main.c',
+    'src/mort/hw.c',
 )
 
 exe = executable(
@@ -65,7 +70,7 @@ run_target(
         '-v',
         '-p', 'atmega328p',
         '-c', 'arduino',
-        '-P', 'COM4',
+        '-P', 'COM5',
         '-b', '115200',
         '-D',
         '-Uflash:w:@0@:i'.format(hex.full_path())

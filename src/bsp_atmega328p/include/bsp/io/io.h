@@ -38,7 +38,7 @@ typedef uint8_t io_pin;
 #define BSP_PD7 0x17  // Port D, Pin 7
 
 /// @brief The logic level of an IO pin.
-typedef enum io_logic_level {
+typedef enum {
     /// @brief Represents a logic low.
     IO_LOW,
 
@@ -47,25 +47,25 @@ typedef enum io_logic_level {
 } io_logic_level;
 
 /// @brief The direction of an IO pin.
-typedef enum io_direction {
+typedef enum {
     /// @brief Represents an input pin.
-    IO_INPUT,
+    IO_DIRECTION_INPUT,
 
     /// @brief Represents an output pin.
-    IO_OUTPUT,
+    IO_DIRECTION_OUTPUT,
 } io_direction;
 
 /// @brief The resistor configuration of an IO pin.
-typedef enum io_resistor {
+typedef enum {
     /// @brief Represents a floating pin.
-    IO_FLOATING,
+    IO_RESISTOR_FLOATING,
 
     /// @brief Represents a pulled up pin.
-    IO_PULLUP,
+    IO_RESISTOR_PULLUP,
 } io_resistor;
 
 /// @brief The configuration of an IO pin.
-typedef struct io_config {
+typedef struct {
     /// @brief The direction of the pin.
     io_direction direction;
 
@@ -75,9 +75,6 @@ typedef struct io_config {
     /// @brief The initial logic level of the pin.
     io_logic_level initial_level;
 } io_config;
-
-/// @brief Initialize the IO module.
-void io_init(void);
 
 /// @brief Configure an IO pin.
 /// @param pin The pin to configure.

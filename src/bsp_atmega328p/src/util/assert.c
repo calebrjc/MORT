@@ -20,7 +20,7 @@ void assert_handler(const char* file, int line, const char* msg_fmt, ...) {
     usart_printf(BSP_USART0, "\r\n");
 
     // Flash the debug LED forever.
-    io_configure(BSP_PB5, (io_config){.direction = IO_OUTPUT});
+    io_configure(BSP_PB5, (io_config){.direction = IO_DIRECTION_OUTPUT});
     while (1) {
         io_toggle(BSP_PB5);
         _delay_ms(500);

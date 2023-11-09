@@ -26,7 +26,11 @@ typedef struct {
     /// @brief The baud rate to use.
     usart_baud_rate baud_rate;
 
-    /// @brief Whether or not to echo received characters.
+    /// @brief Whether or not to echo received characters. If true, all characters received will be
+    ///        echoed back to the sender regardless of whether or not the character was read by
+    ///        usart_read(), meaning that the user will see the characters sent to the USART device,
+    ///        not the characters acknowledged by the application, and that characters will be
+    ///        echoed until the RX buffer is full. If false, no characters will be echoed.
     bool echo_on_recv;
 } usart_config;
 
@@ -69,7 +73,8 @@ void usart_printf(usart device, const char* format, ...);
 /// @param args The arguments to the format string.
 void usart_vprintf(usart device, const char* format, va_list args);
 
-/// @brief Register a callback to be called when a character is received.
+/// @brief Register a callback to be called when a character is received. Note: The registered
+/// callback will be called in an interrupt context.
 /// @param device The USART to register the callback for.
 /// @param callback The callback to register.
 void usart_register_callback(usart device, usart_recv_callback on_character_recv);
