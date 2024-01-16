@@ -1,7 +1,8 @@
-#include "mort/hw.h"
+#include "hw.h"
 
 void handle_usart_recv(void) {
-    usart_read(MORT_USART);
+    char recvd = usart_read(MORT_USART);
+    if (recvd == '\r') { usart_printf(MORT_USART, "$ "); }
 
     io_toggle(MORT_DEBUG_LED);
 }
@@ -11,7 +12,7 @@ int main(void) {
 
     usart_register_callback(MORT_USART, handle_usart_recv);
 
-    usart_printf(MORT_USART, "Welcome to MORT\n> ");
+    usart_printf(MORT_USART, "Welcome to MORT\n$ ");
 
     while (1) {}
 

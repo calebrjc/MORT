@@ -4,6 +4,7 @@ project(
     default_options: [
         'buildtype=minsize',
         'b_lto=true',
+        'b_staticpic=false',
         'cpp_rtti=false',
         'cpp_eh_=none',
         'default_library=static'
@@ -12,70 +13,34 @@ project(
 
 assert(meson.is_cross_build(), 'This project can only be built in a cross build environment.')
 
-subdir('src/bsp_atmega328p')
-
-headers = files(
-    'src/mort/hw.h'
+# bsp-atmega328p
+add_global_arguments(
+    '-DPRINTF_DISABLE_SUPPORT_LONG_LONG',
+    '-DPRINTF_DISABLE_SUPPORT_PTRDIFF_T',
+    '-DPRINTF_DISABLE_SUPPORT_FLOAT',
+    '-DPRINTF_DISABLE_SUPPORT_EXPONENTIAL',
+    language: 'c',
 )
 
-sources = files(
-    'src/main.c',
-    'src/mort/hw.c',
-)
+bsp_atmega328p_dep = dependency('bsp-atmega328p')
 
-exe = executable(
-    '@0@.bin'.format(meson.project_name()),
-    include_directories: bsp_inc,
-    sources: sources,
-    link_with: bsp_lib,
-)
+subdir('src')
 
-objcopy = find_program('avr-objcopy')
-avrdude = find_program('avrdude')
-
-eep_output_file = '@0@.eep'.format(meson.project_name())
-eep = custom_target(
-    eep_output_file,
-    input: exe,
-    output: eep_output_file,
-    command: [
-        objcopy,
-        '-O', 'ihex',
-        '-j', '.eeprom',
-        '--set-section-flags=.eeprom=alloc,load',
-        '--no-change-warnings',
-        '--change-section-lma', '.eeprom=0',
-        '@INPUT@', '@OUTPUT@',
-    ]
-)
-
-hex_output_file = '@0@.hex'.format(meson.project_name())
-hex = custom_target(
-    hex_output_file,
-    input: exe,
-    output: hex_output_file,
-    command: [
-        objcopy,
-        '-O', 'ihex',
-        '-R', '.eeprom',
-        '@INPUT@', '@OUTPUT@',
-    ],
-    depends: eep,
-)
+prgm_avrdude = find_program('avrdude')
 
 run_target(
     'flash',
     command: [
-        avrdude,
+        prgm_avrdude,
         '-v',
         '-p', 'atmega328p',
         '-c', 'arduino',
-        '-P', 'COM5',
+        '-P', 'COM3',
         '-b', '115200',
         '-D',
-        '-Uflash:w:@0@:i'.format(hex.full_path())
+        '-Uflash:w:@0@:i'.format(mort_hex.full_path())
     ],
-    depends : hex,
+    depends : mort_hex,
 )
 
 run_target(
@@ -83,9 +48,7 @@ run_target(
     command: [
         'clang-format',
         '-i',
-        sources,
-        bsp_headers,
-        bsp_sources,
+        mort_src,
     ]
 )
 
@@ -101,11 +64,7 @@ run_target(
         '--suppress=unusedStructMember',
         '--suppress=unusedVariable',
         '--suppress=unmatchedSuppression',
-        '-I', '../src/bsp_atmega328p/include',
-        '-I', '../src/bsp_atmega328p/external/printf', # Hacky. I'll try to fix this later.
-        sources,
-        bsp_headers,
-        bsp_sources,
+        mort_src,
     ],
-    depends: hex,
+    depends: mort_hex,
 )
