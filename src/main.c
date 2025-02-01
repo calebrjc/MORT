@@ -1,20 +1,21 @@
-#include "hw.h"
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/kernel.h>
 
-void handle_usart_recv(void) {
-    char recvd = usart_read(MORT_USART);
-    if (recvd == '\r') { usart_printf(MORT_USART, "$ "); }
+#include "hal/led.h"
+#include "util/debug.h"
 
-    io_toggle(MORT_DEBUG_LED);
-}
+int main(void)
+{
+    int ec = 0;
 
-int main(void) {
-    hw_init();
+    ec = mort_led_init();
+    MORT_ASSERT_MSG(ec == 0, "Failed to initialize the debug LED");
 
-    usart_register_callback(MORT_USART, handle_usart_recv);
-
-    usart_printf(MORT_USART, "Welcome to MORT\n$ ");
-
-    while (1) {}
+    while (1)
+    {
+        MORT_DEBUG_LED_TOGGLE();
+        k_sleep(K_MSEC(1000));
+    }
 
     return 0;
 }
