@@ -1,11 +1,13 @@
 #pragma once
 
+#include "util/stdinc.h"
+
 // NOTE(Caleb):
 // These keycodes are based on Adafruit's NEC IR remote, which was used for this build.
 // https://www.adafruit.com/product/389
 typedef enum
 {
-    MORT_NEX_BTN_NONE      = 0xFF,
+    MORT_NEC_BTN_NONE      = 0xFF,
     MORT_NEC_BTN_VOLN      = 0x00,
     MORT_NEC_BTN_PLAYPAUSE = 0x01,
     MORT_NEC_BTN_VOLP      = 0x02,
@@ -27,11 +29,14 @@ typedef enum
     MORT_NEC_BTN_7         = 0x18,
     MORT_NEC_BTN_8         = 0x19,
     MORT_NEC_BTN_9         = 0x1A,
+    MORT_NEC_BTN_MAX,
 } mort_nec_button_e;
 
-/// @brief Initialize the NEC IR driver.
-/// @return 0 if successful, or -1 if an error occurred.
-int mort_nec_init(void);
+typedef void (*mort_nec_on_data_recv_cb)(mort_nec_button_e data);
 
-/// @brief Run the interrupt handler for the NEC IR driver.
+void mort_nec_set_callback(mort_nec_on_data_recv_cb cb);
+
+const char *mort_nec_button_to_string(mort_nec_button_e button);
+
 void mort_nec_on_falling_edge(void);
+void mort_nec_on_counter_overflow(void);

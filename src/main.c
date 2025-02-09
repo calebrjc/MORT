@@ -1,77 +1,36 @@
+#include <string.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/kernel.h>
 
+#include "driver/nec.h"
 #include "hal/counter.h"
 #include "hal/gpio.h"
-// #include "hal/led.h"
 #include "task/app.h"
 #include "util/debug.h"
 #include "util/stdinc.h"
-// #include "zephyr/dt-bindings/gpio/gpio.h"
 
-static const struct gpio_dt_spec test = GPIO_DT_SPEC_GET(DT_NODELABEL(load_switch), gpios);
+static mort_nec_button_e s_last_button_pressed = MORT_NEC_BTN_NONE;
+static bool              s_printed             = true;
 
-static struct gpio_callback ir_cb       = {0};
-static int                  pulse_count = 0;
-
-// 1ms = 10000 counts
-
-uint32_t pulse_timings[34] = {0};
-
-union
+void on_nec_data_ready(mort_nec_button_e data)
 {
-    struct
-    {
-        uint8_t address;
-        uint8_t address_inv;
-        uint8_t command;
-        uint8_t command_inv;
-    };
-    uint32_t raw;
-} ir_data;
-
-void on_ir_falling_edge(void)
-{
-    if (pulse_count >= 34)
-    {
-        return;
-    }
-
-    uint32_t count = 0;
-    mort_counter_get_count(MORT_CNT_NEC, &count);
-    pulse_timings[pulse_count] = count;
-
-    mort_counter_stop(MORT_CNT_NEC);
-    mort_counter_start(MORT_CNT_NEC);
-
-    if (pulse_count == 0)
-    {
-        ir_data.raw = 0;
-    }
-
-    if (2 <= pulse_count && pulse_count < 34)
-    {
-        int bit = (pulse_timings[pulse_count] > 170) ? 1 : 0;
-        ir_data.raw |= bit << (pulse_count - 2);
-    }
-
-    pulse_count++;
+    s_last_button_pressed = data;
+    s_printed             = false;
 }
 
 int main(void)
 {
     int ec = 0;
 
-    // TODO(Caleb): mort_hal_init()
+    // TODO(Caleb): mort_hal_init()?
 
     ec = mort_gpio_init();
     MORT_ASSERT_MSG(ec == 0, "Failed to initialize the GPIO");
 
-    // ec = mort_led_init();
-    // MORT_ASSERT_MSG(ec == 0, "Failed to initialize the debug LED");
-
     ec = mort_counter_init();
     MORT_ASSERT_MSG(ec == 0, "Failed to initialize the counter");
+
+    mort_nec_set_callback(on_nec_data_ready);
 
     ec = mort_app_task_init();
     MORT_ASSERT_MSG(ec == 0, "Failed to initialize the app task");
@@ -80,29 +39,14 @@ int main(void)
     mort_app_task_run();
 #else
     mort_gpio_attach_interrupt(
-        MORT_GPIO_PIN_NEC_IN, MORT_GPIO_EVT_FALLING_EDGE, on_ir_falling_edge);
-
-    int last_pulse_count = 0;
+        MORT_GPIO_PIN_NEC_IN, MORT_GPIO_EVT_FALLING_EDGE, mort_nec_on_falling_edge);
 
     while (1)
     {
-        if (pulse_count >= 34)
+        if (!s_printed)
         {
-            MORT_LOGI("Pulse timings (falling edge to falling edge):");
-            for (int i = 0; i < 34; i++)
-            {
-                MORT_LOGI(
-                    "Pulse %.02d: %d (%u)", i, pulse_timings[i], (pulse_timings[i] > 200) ? 1 : 0);
-            }
-
-            MORT_LOGI(
-                "Address: 0x%02x, Address Inv: 0x%02x, Command: 0x%02x, Command Inv: 0x%02x",
-                ir_data.address,
-                ir_data.address_inv,
-                ir_data.command,
-                ir_data.command_inv);
-
-            pulse_count = 0;
+            MORT_LOGN("Got NEC command %s", mort_nec_button_to_string(s_last_button_pressed));
+            s_printed = true;
         }
 
         k_sleep(K_MSEC(100));

@@ -4,6 +4,7 @@
 
 // IWYU pragma: begin_exports
 #include <errno.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>

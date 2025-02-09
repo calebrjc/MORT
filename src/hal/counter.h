@@ -4,12 +4,16 @@
 
 #define MORT_CNT_NEC 0
 
+typedef void (*mort_counter_on_overflow_cb)(void);
+
 /// @brief Initialize the counter HAL.
 /// @return 0 if successful, or -EIO if an error occurred.
 int mort_counter_init(void);
 
 /// @brief Start the counter.
-int mort_counter_start(int id);
+/// @oparam id The ID of the counter to start.
+/// @param cb The callback function to call when the counter overflows.
+int mort_counter_start(int id, uint32_t top_value, mort_counter_on_overflow_cb cb);
 
 /// @brief Stop the counter.
 int mort_counter_stop(int id);

@@ -4,7 +4,7 @@
 
 #include <zephyr/kernel.h>
 
-#include "hal/led.h"
+#include "driver/led.h"
 #include "util/debug.h"
 
 #define __MORT_UPTIME_FORMAT     "[%02d:%02d:%02d,%03d]"
