@@ -22,20 +22,24 @@
 // 0x0000  23 20 42 75 69 6c 64 20  2d 2d 2d 2d 2d 2d 2d 2d  |# Build --------|
 #define __MORT_LOG_HEX_LINE_LEN  76
 
+// -----------------------------------------------------------------------------
+
 /// @brief Get the color representation of a log level.
-/// @param level The log level.
+/// @param[in] level The log level.
+/// @return The color representation of the log level.
 static const char *__mort_log_get_level_color(int level);
 
 /// @brief Get the string representation of a log level.
-/// @param level The log level.
+/// @param[in] level The log level.
+/// @return The string representation of the log level.
 static const char *__mort_log_get_level_str(int level);
 
 /// @brief Format the current uptime into a string.
-/// @param o_data The output buffer for the formatted uptime.
-/// @param size The size of the output buffer.
+/// @param[out] o_data The output buffer.
+/// @param[in] size The output buffer size.
 static void __mort_log_format_uptime(char *o_data, size_t size);
 
-// API Implementation ----------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 void __mort_log_impl(int level, char *file, int line, const char *format, ...)
 {
@@ -159,8 +163,6 @@ void __mort_log_hex_impl(int level, char *file, int line, const void *data, size
     }
 }
 
-// Internal Helper Implementation ----------------------------------------------
-
 static const char *__mort_log_get_level_color(int level)
 {
     static const char *LEVEL_COLORS[] = {
@@ -200,8 +202,6 @@ static void __mort_log_format_uptime(char *o_data, size_t size)
 
     snprintf(o_data, size, __MORT_UPTIME_FORMAT, hours, minutes, seconds, uptime);
 }
-
-// Device-Specific Implementation ----------------------------------------------
 
 void __mort_on_assert_failed(void)
 {

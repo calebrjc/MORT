@@ -22,16 +22,29 @@ typedef struct
     mort_gpio_int_handler_cb   handler;
 } __mort_gpio_ctx_t;
 
-// NOTE(Caleb): "event" must be a valid mort_gpio_event_e value.
+// -----------------------------------------------------------------------------
+
+/// @brief Convert a GPIO event to Zephyr GPIO interrupt config flag(s).
+/// @param[in] event The event to convert.
+/// @return The Zephyr GPIO interrupt config flag(s).
+/// @note "event" must be a valid mort_gpio_event_e value.
 static unsigned int __mort_gpio_event_to_zephyr(mort_gpio_event_e event);
 
+/// @brief The global GPIO interrupt callback function.
+/// @param[in] port The GPIO port on which the interrupt occurred.
+/// @param[in] cb The GPIO callback associated with the interrupt.
+/// @param[in] pins The GPIO pin(s) on which the interrupt occurred.
 static void
 __mort_gpio_on_interrupt(const struct device *port, struct gpio_callback *cb, uint32_t pins);
+
+// -----------------------------------------------------------------------------
 
 static __mort_gpio_ctx_t __S_GPIO_CONTEXTS[MORT_GPIO_PIN_MAX] = {
     [MORT_GPIO_PIN_DBG_LED] = {&MORT_DT_SPEC_GPIO_DBG_LED, GPIO_OUTPUT_INACTIVE},
     [MORT_GPIO_PIN_NEC_IN]  = {&MORT_DT_SPEC_GPIO_NEC_IN, GPIO_INPUT | GPIO_PULL_DOWN},
 };
+
+// -----------------------------------------------------------------------------
 
 int mort_gpio_init(void)
 {

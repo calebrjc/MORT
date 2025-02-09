@@ -32,11 +32,18 @@ typedef enum
     MORT_NEC_BTN_MAX,
 } mort_nec_button_e;
 
+/// @brief A function which is called when NEC data is received.
+/// @param[in] data The command that was received.
 typedef void (*mort_nec_on_data_recv_cb)(mort_nec_button_e data);
 
+/// @brief Set the function to call when NEC data is received.
+/// @param[in] cb The function to call when NEC data is received.
 void mort_nec_set_callback(mort_nec_on_data_recv_cb cb);
 
+/// @brief Convert a button code to a string.
+/// @param[in] button The button code to convert.
+/// @return The string representation of the button code.
 const char *mort_nec_button_to_string(mort_nec_button_e button);
 
+/// @brief The function to call when a falling edge is detected on the NEC pin.
 void mort_nec_on_falling_edge(void);
-void mort_nec_on_counter_overflow(void);

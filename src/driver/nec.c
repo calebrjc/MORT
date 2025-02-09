@@ -12,6 +12,12 @@
 
 // -----------------------------------------------------------------------------
 
+/// @brief Counter overflow callback.
+void __mort_nec_on_counter_overflow(void);
+
+/// @brief Check if an edge is valid given the length of its pulse.
+/// @param[in] edge_count The edge number.
+/// @param[in] counter_value The value of the counter (edge period).
 static bool __mort_nec_is_edge_valid(uint32_t edge_count, uint32_t counter_value);
 
 // -----------------------------------------------------------------------------
@@ -79,7 +85,7 @@ void mort_nec_on_falling_edge(void)
     mort_counter_get_count(MORT_CNT_NEC, &count);
 
     mort_counter_stop(MORT_CNT_NEC);
-    mort_counter_start(MORT_CNT_NEC, 10000, mort_nec_on_counter_overflow);
+    mort_counter_start(MORT_CNT_NEC, 10000, __mort_nec_on_counter_overflow);
 
     s_edge_count++;
 
@@ -105,7 +111,7 @@ void mort_nec_on_falling_edge(void)
     }
 }
 
-void mort_nec_on_counter_overflow(void)
+void __mort_nec_on_counter_overflow(void)
 {
     mort_counter_stop(MORT_CNT_NEC);
 

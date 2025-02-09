@@ -5,15 +5,23 @@
 #include <zephyr/kernel.h>
 
 #include "hal/detail/dt.h"
+#include "util/compiler.h"
 #include "util/debug.h"
 
 // NOTE(Caleb):
 // Currently, MORT only uses one timer. This implementation will need to be modified when there are
 // more.
 
+/// @brief Counter overflow callback function.
+/// @param[in] dev The counter device on which the overflow occurred.
+/// @param[in] user_data User data passed to the callback function.
+static void __mort_counter_on_overflow_cb(const struct device *dev, void *user_data);
+
+// -----------------------------------------------------------------------------
+
 static mort_counter_on_overflow_cb s_on_overflow_cb;
 
-static void __mort_counter_on_overflow_cb(const struct device *dev, void *user_data);
+// -----------------------------------------------------------------------------
 
 int mort_counter_init(void)
 {
@@ -26,7 +34,7 @@ int mort_counter_init(void)
     return 0;
 }
 
-int mort_counter_start(int id, uint32_t top_value, mort_counter_on_overflow_cb cb)
+int mort_counter_start(mort_counter_e counter, uint32_t top_value, mort_counter_on_overflow_cb cb)
 {
     int ec = counter_start(MORT_DT_DEV_COUNTER_IR);
     MORT_RETURN_LOGE_IF(ec, -EIO, "Failed to start the IR counter");
@@ -40,7 +48,7 @@ int mort_counter_start(int id, uint32_t top_value, mort_counter_on_overflow_cb c
     return 0;
 }
 
-int mort_counter_stop(int id)
+int mort_counter_stop(mort_counter_e counter)
 {
     int ec = counter_stop(MORT_DT_DEV_COUNTER_IR);
     MORT_RETURN_LOGE_IF(ec, -EIO, "Failed to stop the IR counter");
@@ -48,8 +56,10 @@ int mort_counter_stop(int id)
     return 0;
 }
 
-int mort_counter_get_count(int id, uint32_t *o_count)
+int mort_counter_get_count(mort_counter_e counter, uint32_t *o_count)
 {
+    MORT_RETURN_LOGE_IF(!o_count, -EINVAL, "o_count is NULL");
+
     int ec = counter_get_value(MORT_DT_DEV_COUNTER_IR, o_count);
     MORT_RETURN_LOGE_IF(ec, -EIO, "Failed to get the count value of the IR counter");
 
@@ -58,6 +68,9 @@ int mort_counter_get_count(int id, uint32_t *o_count)
 
 static void __mort_counter_on_overflow_cb(const struct device *dev, void *user_data)
 {
+    MORT_UNUSED(dev);
+    MORT_UNUSED(user_data);
+
     if (s_on_overflow_cb)
     {
         s_on_overflow_cb();
