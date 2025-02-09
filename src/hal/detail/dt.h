@@ -4,8 +4,18 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/kernel.h>
 
-#define __MORT_DT_NODE_DEBUG_LED DT_ALIAS(led0)
-#define __MORT_DT_NODE_IR_COUNTER DT_NODELABEL(counter3)
+// TODO(Caleb): Identify peripherals in the DT and use those names here.
 
-extern const struct gpio_dt_spec MORT_DT_SPEC_DEBUG_LED;
-extern const struct device *MORT_DT_DEV_IR_COUNTER;
+// Node Names ------------------------------------------------------------------
+
+#define __MORT_DT_NODE_GPIO_DBG_LED DT_ALIAS(led0)
+#define __MORT_DT_NODE_GPIO_NEC_IN  DT_NODELABEL(load_switch)
+
+#define __MORT_DT_NODE_COUNTER_IR   DT_NODELABEL(counter3)
+
+// Specs and Devices -----------------------------------------------------------
+
+extern const struct gpio_dt_spec MORT_DT_SPEC_GPIO_DBG_LED;
+extern const struct gpio_dt_spec MORT_DT_SPEC_GPIO_NEC_IN;
+
+extern const struct device *MORT_DT_DEV_COUNTER_IR;

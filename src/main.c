@@ -2,11 +2,12 @@
 #include <zephyr/kernel.h>
 
 #include "hal/counter.h"
-#include "hal/led.h"
+#include "hal/gpio.h"
+// #include "hal/led.h"
 #include "task/app.h"
 #include "util/debug.h"
 #include "util/stdinc.h"
-#include "zephyr/dt-bindings/gpio/gpio.h"
+// #include "zephyr/dt-bindings/gpio/gpio.h"
 
 static const struct gpio_dt_spec test = GPIO_DT_SPEC_GET(DT_NODELABEL(load_switch), gpios);
 
@@ -28,10 +29,14 @@ union
     };
     uint32_t raw;
 } ir_data;
-;
 
-void on_ir_falling_edge(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
+void on_ir_falling_edge(void)
 {
+    if (pulse_count >= 34)
+    {
+        return;
+    }
+
     uint32_t count = 0;
     mort_counter_get_count(MORT_CNT_NEC, &count);
     pulse_timings[pulse_count] = count;
@@ -58,8 +63,12 @@ int main(void)
     int ec = 0;
 
     // TODO(Caleb): mort_hal_init()
-    ec = mort_led_init();
-    MORT_ASSERT_MSG(ec == 0, "Failed to initialize the debug LED");
+
+    ec = mort_gpio_init();
+    MORT_ASSERT_MSG(ec == 0, "Failed to initialize the GPIO");
+
+    // ec = mort_led_init();
+    // MORT_ASSERT_MSG(ec == 0, "Failed to initialize the debug LED");
 
     ec = mort_counter_init();
     MORT_ASSERT_MSG(ec == 0, "Failed to initialize the counter");
@@ -70,13 +79,10 @@ int main(void)
 #if (0)
     mort_app_task_run();
 #else
-    // ec = mort_counter_start(MORT_CNT_NEC);
-    // MORT_ASSERT_MSG(ec == 0, "Failed to start the counter");
+    mort_gpio_attach_interrupt(
+        MORT_GPIO_PIN_NEC_IN, MORT_GPIO_EVT_FALLING_EDGE, on_ir_falling_edge);
 
-    gpio_pin_configure_dt(&test, GPIO_INPUT | GPIO_PULL_DOWN);
-    gpio_pin_interrupt_configure_dt(&test, GPIO_INT_EDGE_TO_ACTIVE);
-    gpio_init_callback(&ir_cb, on_ir_falling_edge, BIT(test.pin));
-    gpio_add_callback_dt(&test, &ir_cb);
+    int last_pulse_count = 0;
 
     while (1)
     {
