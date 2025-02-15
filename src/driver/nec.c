@@ -88,6 +88,7 @@ void mort_nec_on_falling_edge(void)
     mort_counter_start(MORT_CNT_NEC, 10000, __mort_nec_on_counter_overflow);
 
     s_edge_count++;
+    MORT_DEBUG_LED_TOGGLE();
 
     if (!__mort_nec_is_edge_valid(s_edge_count, count))
     {
@@ -99,7 +100,6 @@ void mort_nec_on_falling_edge(void)
     {
         int bit = __MORT_NEC_EDGE_COUNT_TO_BIT(count);
         s_nec_data.raw |= bit << (s_edge_count - 3);
-        MORT_DEBUG_LED_TOGGLE();
     }
 
     if (s_edge_count == 34 || (s_edge_count > 35 && MORT_IS_ODD(s_edge_count)))
@@ -123,6 +123,8 @@ void __mort_nec_on_counter_overflow(void)
     {
         s_cb(MORT_NEC_BTN_NONE);
     }
+
+    MORT_DEBUG_LED_OFF();
 }
 
 static bool __mort_nec_is_edge_valid(uint32_t edge_count, uint32_t counter_value)

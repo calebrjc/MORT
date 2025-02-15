@@ -11,9 +11,6 @@ Relevant information about the parts that MORT uses will be detailed here.
   - [Chassis](#chassis)
   - [Motors](#motors)
   - [Motor Drivers](#motor-drivers)
-  - [Brake/Reverse Lights](#brakereverse-lights)
-  - [Buzzer](#buzzer)
-  - [Range Sensor(s)](#range-sensors)
   - [IR Remote and Receiver](#ir-remote-and-receiver)
   - [Microcontroller](#microcontroller)
   - [Battery](#battery)
@@ -49,31 +46,6 @@ Notes:
 - Load voltage: 2.5V - 13.5V
 - Microcontroller interface: AIN1/2, BIN1/2, PWMA/B, STBY (7 pins), timer if no dedicated pwm
 
-## Brake/Reverse Lights
-
-[10 Segment Bar Graph LED Display - Red](https://www.adafruit.com/product/1921)
-
-A generic white LED will do for reverse lights
-
-Notes:
-- Microcontroller interface: 2 pins, 74HC595, timer
-
-## Buzzer
-
-[Generic Buzzer](https://www.amazon.com/Cylewet-Electronic-Magnetic-Continuous-Arduino/dp/B01N7NHSY6/ref=sr_1_3?keywords=arduino+buzzer&qid=1681794656&sr=8-3)
-
-Notes:
-- Input voltage: 4-8VDC
-- Input current: <25mA
-- Microcontroller interface: ON/OFF (1 pin)
-
-## Range Sensor(s)
-
-[VL53L0X Time of Flight Distance Sensor](https://www.adafruit.com/product/3317)
-
-Notes:
-- Microcontroller interface: I2C, GPIO, SHDN (4 pins)
-
 ## IR Remote and Receiver
 
 [Generic Remote](https://www.adafruit.com/product/389)
@@ -85,13 +57,11 @@ Notes:
 
 ## Microcontroller
 
-[Arduino Nano (or compatible clone)](https://www.amazon.com/Deegoo-ATmega328P-Microcontroller-Board-Arduino/dp/B07R9VWD39/ref=asc_df_B07R9VWD39/?tag=hyprod-20&linkCode=df0&hvadid=459728334703&hvpos=&hvnetw=g&hvrand=898811443164575780&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9011071&hvtargid=pla-945070251730&th=1)
+STM32G0 Series Microcontroller (undecided on part number)
 
 Notes:
-- ATMega328P microcontroller
-- Board package is used to avoid having to design the PCB around an SMD chip footprint for this project
-- Slightly better choice than the MSP430 because it has three timers as opposed to two
-- No Arduino code or libraries will be used; this microcontroller will be programmed using only bare-metal C
+- STM32G0 microcontroller
+- Zephyr RTOS
 
 ## Battery
 

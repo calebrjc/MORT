@@ -12,8 +12,7 @@ set(MORT_SOURCES
     src/hal/gpio.c
     src/hal/detail/dt.c
     src/task/app.c
-    src/util/debug.c
-)
+    src/util/debug.c)
 
 target_include_directories(app PRIVATE src)
 target_sources(app PRIVATE ${MORT_SOURCES})

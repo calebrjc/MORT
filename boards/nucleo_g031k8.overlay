@@ -1,15 +1,15 @@
 &timers3 {
-	status = "okay";
-	st,prescaler = <639>; // Clock at 64 MHz, target period 10us
+    status = "okay";
+    st,prescaler = <639>; // Clock at 64 MHz, 10us period
 
-	counter3: counter {
-		status = "okay";
-	};
+    counter3: counter {
+        status = "okay";
+    };
 };
 
 / {
-	load_switch: load_switch {
-		compatible = "power-switch";
-		gpios = <&gpioa 8 GPIO_ACTIVE_HIGH>;
-	};
+    load_switch: load_switch {
+        compatible = "power-switch";
+        gpios = <&gpioa 8 GPIO_ACTIVE_HIGH>;
+    };
 };
