@@ -80,3 +80,8 @@ fp-info-cache
 
 # Editor-specific configuration
 .vscode/
+.cache/
+.clangd
+
+# Build artifacts
+build/
