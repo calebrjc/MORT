@@ -29,7 +29,8 @@ int main(void)
     ec = mort_counter_init();
     MORT_ASSERT_MSG(ec == 0, "Failed to initialize the counter");
 
-    mort_nec_set_callback(on_nec_data_ready);
+    ec = mort_nec_init(MORT_GPIO_PIN_NEC_IN, MORT_CNT_NEC, on_nec_data_ready);
+    MORT_ASSERT_MSG(ec == 0, "Failed to initialize the NEC");
 
     ec = mort_app_task_init();
     MORT_ASSERT_MSG(ec == 0, "Failed to initialize the app task");
@@ -37,9 +38,6 @@ int main(void)
 #if (0)
     mort_app_task_run();
 #else
-    mort_gpio_attach_interrupt(
-        MORT_GPIO_PIN_NEC_IN, MORT_GPIO_EVT_FALLING_EDGE, mort_nec_on_falling_edge);
-
     while (1)
     {
         if (!s_printed)
