@@ -25,15 +25,15 @@ typedef struct
 // -----------------------------------------------------------------------------
 
 /// @brief Convert a GPIO event to Zephyr GPIO interrupt config flag(s).
-/// @param[in] event The event to convert.
+/// @param [in] event The event to convert.
 /// @return The Zephyr GPIO interrupt config flag(s).
 /// @note "event" must be a valid mort_gpio_event_e value.
 static unsigned int __mort_gpio_event_to_zephyr(mort_gpio_event_e event);
 
 /// @brief The global GPIO interrupt callback function.
-/// @param[in] port The GPIO port on which the interrupt occurred.
-/// @param[in] cb The GPIO callback associated with the interrupt.
-/// @param[in] pins The GPIO pin(s) on which the interrupt occurred.
+/// @param [in] port The GPIO port on which the interrupt occurred.
+/// @param [in] cb The GPIO callback associated with the interrupt.
+/// @param [in] pins The GPIO pin(s) on which the interrupt occurred.
 static void
 __mort_gpio_on_interrupt(const struct device *port, struct gpio_callback *cb, uint32_t pins);
 
