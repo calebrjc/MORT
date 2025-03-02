@@ -10,6 +10,7 @@ set(MORT_SOURCES
     src/driver/nec.c
     src/hal/counter.c
     src/hal/gpio.c
+    src/hal/pwm.c
     src/hal/detail/dt.c
     src/task/app.c
     src/util/debug.c)

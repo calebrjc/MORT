@@ -4,6 +4,7 @@
 #include "driver/nec.h"
 #include "hal/counter.h"
 #include "hal/gpio.h"
+#include "hal/pwm.h"
 #include "task/app.h"
 #include "util/debug.h"
 #include "util/stdinc.h"
@@ -38,14 +39,20 @@ int main(void)
 #if (0)
     mort_app_task_run();
 #else
+    ec = mort_pwm_init(MORT_PWM_CH_MOTORR);
+    MORT_ASSERT_MSG(ec == 0, "Failed to initialize the PWM");
+
+    ec = mort_pwm_init(MORT_PWM_CH_MOTORL);
+    MORT_ASSERT_MSG(ec == 0, "Failed to initialize the PWM");
+
+    ec = mort_pwm_set_duty_cycle(MORT_PWM_CH_MOTORR, 50);
+    MORT_ASSERT_MSG(ec == 0, "Failed to set the duty cycle");
+
+    ec = mort_pwm_set_duty_cycle(MORT_PWM_CH_MOTORL, 50);
+    MORT_ASSERT_MSG(ec == 0, "Failed to set the duty cycle");
+
     while (1)
     {
-        if (!s_printed)
-        {
-            MORT_LOGN("Got NEC command %s", mort_nec_button_to_string(s_last_button_pressed));
-            s_printed = true;
-        }
-
         k_sleep(K_MSEC(100));
     }
 #endif

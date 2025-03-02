@@ -1,10 +1,29 @@
 #include "hal/detail/dt.h"
-#include "zephyr/device.h"
-#include "zephyr/drivers/gpio.h"
+
+#include <zephyr/device.h>
+
+// Node Names ------------------------------------------------------------------
+
+#define __MORT_DT_NODE_GPIOS          DT_NODELABEL(gpios)
+#define __MORT_DT_NODE_GPIO_DBG_LED   DT_CHILD(__MORT_DT_NODE_GPIOS, debug_led)
+#define __MORT_DT_NODE_GPIO_NEC_IN    DT_CHILD(__MORT_DT_NODE_GPIOS, nec_in)
+
+#define __MORT_DT_NODE_PWMS           DT_NODELABEL(pwms)
+#define __MORT_DT_NODE_PWM_MOTOR_PWMA DT_CHILD(__MORT_DT_NODE_PWMS, motor_pwma)
+#define __MORT_DT_NODE_PWM_MOTOR_PWMB DT_CHILD(__MORT_DT_NODE_PWMS, motor_pwmb)
+
+#define __MORT_DT_NODE_COUNTER_IR     DT_NODELABEL(counter3)
+
+// Specs and Devices -----------------------------------------------------------
 
 const struct gpio_dt_spec MORT_DT_SPEC_GPIO_DBG_LED =
     GPIO_DT_SPEC_GET(__MORT_DT_NODE_GPIO_DBG_LED, gpios);
 const struct gpio_dt_spec MORT_DT_SPEC_GPIO_NEC_IN =
     GPIO_DT_SPEC_GET(__MORT_DT_NODE_GPIO_NEC_IN, gpios);
 
-const struct device *MORT_DT_DEV_COUNTER_IR = DEVICE_DT_GET(__MORT_DT_NODE_COUNTER_IR);
+const struct pwm_dt_spec MORT_DT_SPEC_PWM_MOTOR_PWMA =
+    PWM_DT_SPEC_GET(__MORT_DT_NODE_PWM_MOTOR_PWMA);
+const struct pwm_dt_spec MORT_DT_SPEC_PWM_MOTOR_PWMB =
+    PWM_DT_SPEC_GET(__MORT_DT_NODE_PWM_MOTOR_PWMB);
+
+const struct device *MORT_DT_DEV_CNT_IR = DEVICE_DT_GET(__MORT_DT_NODE_COUNTER_IR);

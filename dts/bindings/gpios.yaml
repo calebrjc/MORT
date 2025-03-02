@@ -1,0 +1,10 @@
+description: Miscellaneous GPIO pins for MORT.
+
+compatible: "gpios"
+
+child-binding:
+  description: GPIO child nodes.
+  properties:
+    gpios:
+     type: phandle-array
+     required: true

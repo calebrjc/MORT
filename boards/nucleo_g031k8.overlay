@@ -1,3 +1,13 @@
+&timers2 {
+    status = "okay";
+
+    pwm2: pwm {
+        status = "okay";
+        pinctrl-0 = <&tim2_ch2_pa1>;
+        pinctrl-names = "default";
+    };
+};
+
 &timers3 {
     status = "okay";
     st,prescaler = <639>; // Clock at 64 MHz, 10us period
@@ -7,9 +17,41 @@
     };
 };
 
-/ {
-    load_switch: load_switch {
-        compatible = "power-switch";
-        gpios = <&gpioa 8 GPIO_ACTIVE_HIGH>;
+&timers14 {
+    status = "okay";
+
+    pwm14: pwm {
+        status = "okay";
+        pinctrl-0 = <&tim14_ch1_pa4>;
+        pinctrl-names = "default";
     };
+};
+
+/ {
+    gpios: gpios {
+        compatible = "gpios";
+
+        debug_led: debug_led {
+            gpios = <&gpioc 6 GPIO_ACTIVE_HIGH>;
+        };
+
+        nec_in: nec_in {
+            gpios = <&gpioa 8 GPIO_ACTIVE_HIGH>;
+        };
+    };
+
+    pwms: pwms {
+        compatible = "pwms";
+
+        motor_pwma: motor_pwma {
+            pwms = <&pwm2 2 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
+        };
+
+        motor_pwmb: motor_pwmb {
+            pwms = <&pwm14 1 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
+        };
+    };
+
+    /delete-node/ aliases;
+    /delete-node/ leds;
 };
