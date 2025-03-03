@@ -40,8 +40,13 @@ __mort_gpio_on_interrupt(const struct device *port, struct gpio_callback *cb, ui
 // -----------------------------------------------------------------------------
 
 static __mort_gpio_ctx_t __S_GPIO_CONTEXTS[MORT_GPIO_PIN_MAX] = {
-    [MORT_GPIO_PIN_DBG_LED] = {&MORT_DT_SPEC_GPIO_DBG_LED, GPIO_OUTPUT_INACTIVE},
-    [MORT_GPIO_PIN_NEC_IN]  = {&MORT_DT_SPEC_GPIO_NEC_IN, GPIO_INPUT | GPIO_PULL_DOWN},
+    [MORT_GPIO_PIN_DBG_LED]    = {&MORT_DT_SPEC_GPIO_DBG_LED, GPIO_OUTPUT_INACTIVE},
+    [MORT_GPIO_PIN_NEC_IN]     = {&MORT_DT_SPEC_GPIO_NEC_IN, GPIO_INPUT | GPIO_PULL_DOWN},
+    [MORT_GPIO_PIN_MOTOR_AIN1] = {&MORT_DT_SPEC_GPIO_MOTOR_AIN1, GPIO_OUTPUT_INACTIVE},
+    [MORT_GPIO_PIN_MOTOR_AIN2] = {&MORT_DT_SPEC_GPIO_MOTOR_AIN2, GPIO_OUTPUT_INACTIVE},
+    [MORT_GPIO_PIN_MOTOR_BIN1] = {&MORT_DT_SPEC_GPIO_MOTOR_BIN1, GPIO_OUTPUT_INACTIVE},
+    [MORT_GPIO_PIN_MOTOR_BIN2] = {&MORT_DT_SPEC_GPIO_MOTOR_BIN2, GPIO_OUTPUT_INACTIVE},
+    [MORT_GPIO_PIN_MOTOR_STBY] = {&MORT_DT_SPEC_GPIO_MOTOR_STBY, GPIO_OUTPUT_INACTIVE},
 };
 
 // -----------------------------------------------------------------------------

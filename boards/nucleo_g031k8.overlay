@@ -38,6 +38,26 @@
         nec_in: nec_in {
             gpios = <&gpioa 8 GPIO_ACTIVE_HIGH>;
         };
+
+        motor_ain1: motor_ain1 {
+            gpios = <&gpiob 8 GPIO_ACTIVE_HIGH>;
+        };
+
+        motor_ain2: motor_ain2 {
+            gpios = <&gpiob 2 GPIO_ACTIVE_HIGH>;
+        };
+
+        motor_bin1: motor_bin1 {
+            gpios = <&gpiob 0 GPIO_ACTIVE_HIGH>;
+        };
+
+        motor_bin2: motor_bin2 {
+            gpios = <&gpioa 9 GPIO_ACTIVE_HIGH>;
+        };
+
+        motor_stby: motor_stby {
+            gpios = <&gpioa 10 GPIO_ACTIVE_HIGH>;
+        };
     };
 
     pwms: pwms {

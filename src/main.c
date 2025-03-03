@@ -53,7 +53,13 @@ int main(void)
 
     while (1)
     {
-        k_sleep(K_MSEC(100));
+        mort_gpio_toggle(MORT_GPIO_PIN_MOTOR_AIN1);
+        mort_gpio_toggle(MORT_GPIO_PIN_MOTOR_AIN2);
+        mort_gpio_toggle(MORT_GPIO_PIN_MOTOR_BIN1);
+        mort_gpio_toggle(MORT_GPIO_PIN_MOTOR_BIN2);
+        mort_gpio_toggle(MORT_GPIO_PIN_MOTOR_STBY);
+
+        k_sleep(K_MSEC(500));
     }
 #endif
     // NOTE(Caleb): We should never get to this point
