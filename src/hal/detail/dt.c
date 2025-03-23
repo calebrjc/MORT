@@ -21,6 +21,7 @@
 
 // Specs and Devices -----------------------------------------------------------
 
+const struct device      *MORT_GPIOA = DEVICE_DT_GET(DT_NODELABEL(gpioa));
 const struct gpio_dt_spec MORT_DT_SPEC_GPIO_DBG_LED =
     GPIO_DT_SPEC_GET(__MORT_DT_NODE_GPIO_DBG_LED, gpios);
 const struct gpio_dt_spec MORT_DT_SPEC_GPIO_NEC_IN =

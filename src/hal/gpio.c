@@ -1,12 +1,14 @@
 #include "hal/gpio.h"
 
+#include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/pm/device.h>
 
 #include "hal/detail/dt.h"
 #include "util/compiler.h"
 #include "util/debug.h"
 #include "util/stdinc.h"
-#include "zephyr/dt-bindings/gpio/gpio.h"
 
 #define __MORT_GPIO_ENSURE_PIN_NUMBER_VALID(__pin)                                                 \
     MORT_RETURN_LOGE_IF(                                                                           \
@@ -68,6 +70,8 @@ int mort_gpio_init(void)
         int ec = gpio_pin_configure_dt(ctx->spec, ctx->flags);
         MORT_RETURN_LOGE_IF(ec < 0, -EIO, "GPIO error: Failed to configure GPIO pin %d", pin);
     }
+
+    pm_device_wakeup_enable(MORT_GPIOA, true);
 
     return 0;
 }

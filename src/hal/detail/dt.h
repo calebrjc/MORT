@@ -9,6 +9,7 @@
 // IMYU pragma: end exports
 
 // GPIOs
+extern const struct device      *MORT_GPIOA;
 extern const struct gpio_dt_spec MORT_DT_SPEC_GPIO_DBG_LED;
 extern const struct gpio_dt_spec MORT_DT_SPEC_GPIO_NEC_IN;
 extern const struct gpio_dt_spec MORT_DT_SPEC_GPIO_MOTOR_AIN1;
