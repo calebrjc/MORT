@@ -1,5 +1,6 @@
 #pragma once
 
+#include "util/compiler.h"
 #include "util/stdinc.h"
 
 // TODO(Caleb): Configure the debug system using build flags
@@ -64,7 +65,7 @@ void __mort_on_assert_failed(void);
 #define MORT_ASSERT(__cond)                                                                        \
     do                                                                                             \
     {                                                                                              \
-        if (!(__cond))                                                                             \
+        if (!MORT_UNLIKELY(__cond))                                                                \
         {                                                                                          \
             MORT_LOGE("Assertion failed: %s\n", #__cond);                                          \
             __mort_on_assert_failed();                                                             \
@@ -74,32 +75,11 @@ void __mort_on_assert_failed(void);
 #define MORT_ASSERT_MSG(__cond, __fmt, ...)                                                        \
     do                                                                                             \
     {                                                                                              \
-        if (!(__cond))                                                                             \
+        if (!MORT_UNLIKELY(__cond))                                                                \
         {                                                                                          \
             MORT_LOGE("Assertion failed: %s\n", #__cond);                                          \
             MORT_LOGE(__fmt, ##__VA_ARGS__);                                                       \
             __mort_on_assert_failed();                                                             \
-        }                                                                                          \
-    } while (0)
-
-#define MORT_CHECK(__cond)                                                                         \
-    do                                                                                             \
-    {                                                                                              \
-        if (!(__cond))                                                                             \
-        {                                                                                          \
-            MORT_LOGW("Check failed: %s\n", #__cond);                                              \
-            return;                                                                                \
-        }                                                                                          \
-    } while (0)
-
-#define MORT_CHECK_MSG(__cond, __fmt, ...)                                                         \
-    do                                                                                             \
-    {                                                                                              \
-        if (!(__cond))                                                                             \
-        {                                                                                          \
-            MORT_LOGW("Check failed: %s\n", #__cond);                                              \
-            MORT_LOGW(__fmt, ##__VA_ARGS__);                                                       \
-            return;                                                                                \
         }                                                                                          \
     } while (0)
 

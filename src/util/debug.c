@@ -25,18 +25,18 @@
 // -----------------------------------------------------------------------------
 
 /// @brief Get the color representation of a log level.
-/// @param [in] level The log level.
+/// @param[in] level The log level.
 /// @return The color representation of the log level.
 static const char *__mort_log_get_level_color(int level);
 
 /// @brief Get the string representation of a log level.
-/// @param [in] level The log level.
+/// @param[in] level The log level.
 /// @return The string representation of the log level.
 static const char *__mort_log_get_level_str(int level);
 
 /// @brief Format the current uptime into a string.
 /// @param[out] o_data The output buffer.
-/// @param [in] size The output buffer size.
+/// @param[in] size The output buffer size.
 static void __mort_log_format_uptime(char *o_data, size_t size);
 
 // -----------------------------------------------------------------------------

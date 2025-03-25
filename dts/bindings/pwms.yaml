@@ -1,0 +1,14 @@
+description: PWM nodes for use by MORT.
+
+compatible: "pwms"
+
+child-binding:
+  description: PWM child nodes.
+  properties:
+    pwms:
+      type: phandle-array
+      required: true
+      description: |
+        Reference to a PWM instance.
+
+        <phandle channel period(ns) flags>

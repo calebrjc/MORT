@@ -20,8 +20,8 @@ void __mort_nec_on_falling_edge(void);
 void __mort_nec_on_counter_overflow(void);
 
 /// @brief Check if an edge is valid given the length of its pulse.
-/// @param [in] edge_count The edge number.
-/// @param [in] counter_value The value of the counter (edge period).
+/// @param[in] edge_count The edge number.
+/// @param[in] counter_value The value of the counter (edge period).
 static bool __mort_nec_is_edge_valid(uint32_t edge_count, uint32_t counter_value);
 
 // -----------------------------------------------------------------------------

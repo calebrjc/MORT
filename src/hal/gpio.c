@@ -1,12 +1,14 @@
 #include "hal/gpio.h"
 
+#include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/pm/device.h>
 
 #include "hal/detail/dt.h"
 #include "util/compiler.h"
 #include "util/debug.h"
 #include "util/stdinc.h"
-#include "zephyr/dt-bindings/gpio/gpio.h"
 
 #define __MORT_GPIO_ENSURE_PIN_NUMBER_VALID(__pin)                                                 \
     MORT_RETURN_LOGE_IF(                                                                           \
@@ -25,23 +27,28 @@ typedef struct
 // -----------------------------------------------------------------------------
 
 /// @brief Convert a GPIO event to Zephyr GPIO interrupt config flag(s).
-/// @param [in] event The event to convert.
+/// @param[in] event The event to convert.
 /// @return The Zephyr GPIO interrupt config flag(s).
 /// @note "event" must be a valid mort_gpio_event_e value.
 static unsigned int __mort_gpio_event_to_zephyr(mort_gpio_event_e event);
 
 /// @brief The global GPIO interrupt callback function.
-/// @param [in] port The GPIO port on which the interrupt occurred.
-/// @param [in] cb The GPIO callback associated with the interrupt.
-/// @param [in] pins The GPIO pin(s) on which the interrupt occurred.
+/// @param[in] port The GPIO port on which the interrupt occurred.
+/// @param[in] cb The GPIO callback associated with the interrupt.
+/// @param[in] pins The GPIO pin(s) on which the interrupt occurred.
 static void
 __mort_gpio_on_interrupt(const struct device *port, struct gpio_callback *cb, uint32_t pins);
 
 // -----------------------------------------------------------------------------
 
 static __mort_gpio_ctx_t __S_GPIO_CONTEXTS[MORT_GPIO_PIN_MAX] = {
-    [MORT_GPIO_PIN_DBG_LED] = {&MORT_DT_SPEC_GPIO_DBG_LED, GPIO_OUTPUT_INACTIVE},
-    [MORT_GPIO_PIN_NEC_IN]  = {&MORT_DT_SPEC_GPIO_NEC_IN, GPIO_INPUT | GPIO_PULL_DOWN},
+    [MORT_GPIO_PIN_DBG_LED]    = {&MORT_DT_SPEC_GPIO_DBG_LED, GPIO_OUTPUT_INACTIVE},
+    [MORT_GPIO_PIN_NEC_IN]     = {&MORT_DT_SPEC_GPIO_NEC_IN, GPIO_INPUT},
+    [MORT_GPIO_PIN_MOTOR_AIN1] = {&MORT_DT_SPEC_GPIO_MOTOR_AIN1, GPIO_OUTPUT_INACTIVE},
+    [MORT_GPIO_PIN_MOTOR_AIN2] = {&MORT_DT_SPEC_GPIO_MOTOR_AIN2, GPIO_OUTPUT_INACTIVE},
+    [MORT_GPIO_PIN_MOTOR_BIN1] = {&MORT_DT_SPEC_GPIO_MOTOR_BIN1, GPIO_OUTPUT_INACTIVE},
+    [MORT_GPIO_PIN_MOTOR_BIN2] = {&MORT_DT_SPEC_GPIO_MOTOR_BIN2, GPIO_OUTPUT_INACTIVE},
+    [MORT_GPIO_PIN_MOTOR_STBY] = {&MORT_DT_SPEC_GPIO_MOTOR_STBY, GPIO_OUTPUT_INACTIVE},
 };
 
 // -----------------------------------------------------------------------------
@@ -63,6 +70,8 @@ int mort_gpio_init(void)
         int ec = gpio_pin_configure_dt(ctx->spec, ctx->flags);
         MORT_RETURN_LOGE_IF(ec < 0, -EIO, "GPIO error: Failed to configure GPIO pin %d", pin);
     }
+
+    pm_device_wakeup_enable(MORT_GPIOA, true);
 
     return 0;
 }
