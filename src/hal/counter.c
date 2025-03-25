@@ -13,8 +13,8 @@
 // more.
 
 /// @brief Counter overflow callback function.
-/// @param [in] dev The counter device on which the overflow occurred.
-/// @param [in] user_data User data passed to the callback function.
+/// @param[in] dev The counter device on which the overflow occurred.
+/// @param[in] user_data User data passed to the callback function.
 static void __mort_counter_on_overflow_cb(const struct device *dev, void *user_data);
 
 // -----------------------------------------------------------------------------
