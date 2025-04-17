@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "MORT")(type "KiCad")(uri "${KIPRJMOD}/MORT.kicad_sym")(options "")(descr ""))
+)
